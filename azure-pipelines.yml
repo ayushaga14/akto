@@ -1,4 +1,4 @@
-yamlCopytrigger:
+trigger:
 - main  # Adjust this based on the branch to trigger the pipeline
 
 pool:
