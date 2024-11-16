@@ -1,0 +1,39 @@
+yamlCopytrigger:
+- main  # Adjust this based on the branch to trigger the pipeline
+
+pool:
+  vmImage: 'ubuntu-latest'  # Defines the agent where the pipeline will run
+
+variables:
+  AKTO_DASHBOARD_URL: "https://app.akto.io"
+  AKTO_API_KEY: "<token>"
+  AKTO_TEST_ID: "<test-id>"
+  WAIT_TIME_FOR_RESULT: "1000"
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    displayName: 'Building the Project'
+    steps:
+    - script: |
+        echo "Compiling the code..."
+        echo "Compile complete."
+      displayName: 'Compile'
+
+- stage: Test
+  displayName: 'Test Stage'
+  jobs:
+  - job: TestScan
+    displayName: 'Run Akto Security Test'
+    container:  # Use container for this job
+      image: aktosecurity/akto-testing-scan:latest
+    steps:
+    - script: |
+        cd /usr/src/app
+        echo $(AKTO_DASHBOARD_URL)
+        echo $(AKTO_API_KEY)
+        echo $(AKTO_TEST_ID)
+        node index.js
+      displayName: 'Running Akto Test Scan'
